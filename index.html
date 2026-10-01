@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1a3f">
+  <title>Fegato Etrusco - Vedi a casa tua</title>
+
+  <!-- Visualizzatore 3D/AR di Google (funziona su iPhone e Android) -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%; overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 35%, #1c3a85 0%, #0b1a3f 60%, #060d24 100%);
+      color: #fff; -webkit-tap-highlight-color: transparent;
+    }
+
+    .page {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+    }
+
+    header { text-align: center; padding: 22px 20px 0; flex: 0 0 auto; }
+    header h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .5px; }
+    header p  { margin: 6px 0 0; font-size: 13px; opacity: .75; }
+
+    model-viewer {
+      flex: 1 1 auto; width: 100%; min-height: 0;
+      background: transparent; --poster-color: transparent;
+      --progress-bar-color: #7b2ff7; --progress-mask: transparent;
+    }
+
+    .bottom {
+      flex: 0 0 auto; text-align: center;
+      padding: 8px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Bottone "Vedi a casa tua" */
+    #ar-button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; max-width: 360px; min-height: 56px; padding: 14px 24px;
+      background: #7b2ff7; color: #fff; border: 0; border-radius: 30px;
+      font-size: 18px; font-weight: 700; font-family: inherit;
+      box-shadow: 0 8px 22px rgba(123,47,247,.45);
+      cursor: pointer; -webkit-appearance: none; appearance: none;
+    }
+    #ar-button:active { transform: scale(.98); background: #6a1fe0; }
+    #ar-button svg { width: 24px; height: 24px; fill: #fff; flex: 0 0 auto; }
+
+    .hint { margin: 12px 0 0; font-size: 12px; opacity: .7; }
+    #no-ar { display: none; margin: 0; font-size: 13px; opacity: .85; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <header>
+      <h1>Fegato Etrusco</h1>
+      <p>Ruota il modello con il dito · pizzica per ingrandire</p>
+    </header>
+
+    <model-viewer
+      id="mv"
+      src="./fegato_etrusco.glb"
+      ios-src="./fegato_etrusco.usdz"
+      poster="./fegato_etrusco.png"
+      alt="Fegato etrusco in 3D"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      ar-scale="auto"
+      ar-placement="floor"
+      camera-controls
+      touch-action="pan-y"
+      auto-rotate
+      auto-rotate-delay="1500"
+      rotation-per-second="20deg"
+      camera-orbit="0deg 65deg auto"
+      shadow-intensity="1"
+      shadow-softness="1"
+      exposure="1.1"
+      interaction-prompt="none"
+      reveal="auto">
+
+      <!-- Bottone che apre la fotocamera in realtà aumentata -->
+      <button slot="ar-button" id="ar-button" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Zm0 2.3 6.5 3.6L12 11.5 5.5 7.9 12 4.3ZM5 9.6l6 3.3v6.6l-6-3.3V9.6Zm8 9.9v-6.6l6-3.3v6.6l-6 3.3Z"/></svg>
+        Vedi a casa tua
+      </button>
+    </model-viewer>
+
+    <div class="bottom">
+      <p class="hint" id="hint">Si aprirà la fotocamera: inquadra una superficie piana e il fegato etrusco comparirà davanti a te.</p>
+      <p id="no-ar">La realtà aumentata non è disponibile su questo dispositivo.<br>Apri questa pagina da un iPhone o da un telefono Android.</p>
+    </div>
+  </div>
+
+  <script>
+    // Se il dispositivo non supporta la realtà aumentata (es. computer), mostra un avviso
+    const mv = document.getElementById('mv');
+    mv.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!mv.canActivateAR) {
+          document.getElementById('hint').style.display = 'none';
+          document.getElementById('no-ar').style.display = 'block';
+        }
+      }, 300);
+    });
+  </script>
+
+</body>
+</html>
